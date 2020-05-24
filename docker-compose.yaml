@@ -1,0 +1,19 @@
+version: '3.5'
+
+services:
+
+  web_server:
+    image: nginx-proxy
+    build: .
+    restart: unless-stopped
+    ports:
+      - '80:80/tcp'
+    volumes:
+      - ./web_server/configs/global:/etc/nginx/conf.d/my_proxy.conf
+      - ./web_server/configs/acme.localhost_location/:/etc/nginx/vhost.d/acme.localhost_location
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+
+  site:
+    image: jwilder/whoami
+    environment: 
+      VIRTUAL_HOST: 'acme.localhost'
